@@ -1,6 +1,7 @@
 import http from 'k6/http';
 import { sleep, check } from 'k6';
 import { Trend, Rate } from 'k6/metrics';
+import { htmlReport } from "https://raw.githubusercontent.com/benc-uk/k6-reporter/main/dist/bundle.js";
 
 const errorRate = new Rate('errors');
 const responseTimeTrend = new Trend('response_time');
@@ -13,6 +14,12 @@ export const options = {
   ],
 };
 
+export function handleSummary(data) {
+  return {
+    "summary.html": htmlReport(data),
+  };
+}
+
 export default function() {
     let payload = {
       name: 'Distribuição pesquisa teste',
@@ -20,14 +27,14 @@ export default function() {
       anonymous_answer: true,
       csv_file: 'string',
       template: 'string',
-      research_id: '3379156f-39c0-4af0-97b0-67671b82ee7a'
+      research_id: 'e4ee82c7-2dee-4c20-9c99-76dc9b37b603'
     };
     
     let headers = {
       'Content-Type': 'application/json',
     };
     
-    let res = http.post('http://54.174.44.249:8080/distribuitions/', JSON.stringify(payload), { headers: headers });
+    let res = http.post('http://44.201.207.222:8080/distribuitions/', JSON.stringify(payload), { headers: headers });
 
     errorRate.add(res.status >= 400);
     responseTimeTrend.add(res.timings.duration);
