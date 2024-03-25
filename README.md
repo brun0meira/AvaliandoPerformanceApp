@@ -43,7 +43,7 @@ O teste de carga implementado demonstra o comportamento de POST de distribuiçã
 
 ## Registro Visual do processo - Resultados
 
-Utilizou-se a ferramenta K6 HTML Report Exporter para gerar um relatório visual com os resultados dos testes desenvolvidos. Docs completa da API: https://github.com/benc-uk/k6-reporter
+Realizamos um teste de carga utilizando o k6 junto com uma biblioteca que gera um resumo visual em HTML dos resultados (K6 HTML Report Exporter). Essa combinação de ferramentas permite não apenas executar testes de carga robustos, mas também apresentar os dados de forma clara e interativa, facilitando a análise e compreensão dos resultados. Docs completa da API: https://github.com/benc-uk/k6-reporter
 
 #### Output do terminal
 
@@ -55,23 +55,35 @@ Utilizou-se a ferramenta K6 HTML Report Exporter para gerar um relatório visual
 
 Essa foto mostra várias métricas relacionadas a requisições HTTP:
 
-- http_req_duration: O tempo total da requisição.
-- http_req_waiting: O tempo gasto esperando por uma resposta.
-- Outras métricas incluem tempo de conexão, handshaking TLS, envio, recebimento e bloqueio.
+#### Request Metrics
+
+- Total de Requisições: O sistema processou 1.046.766 requisições durante o teste.
+- Requisições Falhas: Observamos 203.563 falhas, o que representa uma taxa significativa de falhas que precisam ser investigadas.
+- Duração da Requisição e Espera (http_req_duration, http_req_waiting): Os valores máximos são extremamente altos (cerca de 59 segundos), o que é atípico e preocupante para a maioria das aplicações web. As medianas, em torno de 1,7 segundos, também estão altas, indicando atrasos substanciais na resposta.
+- Conectividade (http_req_connecting): As conexões parecem estabelecer rapidamente, o que é positivo.
+- Recebimento de Dados (http_req_receiving): Os tempos são baixos, sugerindo que a transferência de dados do servidor para o cliente é eficiente.
+- Bloqueio de Requisições (http_req_blocked): Há casos de bloqueio, mas a mediana é 0, indicando que não é um problema frequente.
+- Duração da Iteração (iteration_duration): A duração média das iterações é alta, reforçando os indícios de atrasos no processamento das requisições.
+
+#### Custom Metrics
+
+- Tempo de Conexão (connection_time): Os tempos variam, mas a média é razoável, indicando que a conexão em si não é a fonte do problema.
+- Erros (errors): Embora não haja dados específicos fornecidos, o campo sugere que erros foram monitorados.
+- Tempo de Resposta (response_time): Alinhado com a duração da requisição, indicando que os tempos de resposta são uma área crítica.
+- Taxa de Transferência (transfer_rate): Os dados mostram taxas de transferência variáveis, com máximos altos e uma média decente.
 
 ### Other Stats
 
-![Other Stats](./assets/checksGroups.png)
+![Other Stats](./assets/otherStats.png)
 
 A segunda foto fornece detalhes sobre verificações personalizadas, que são condições ou afirmações que o teste verifica, como:
 
-- Códigos de status HTTP.
-- Tempos de resposta.
-- Verificações de conteúdo nas respostas de corpos e cabeçalhos.
+- Verificações Passadas e Falhas: Um número expressivo de falhas em verificações (831.504 falhas) indica que muitas das respostas do servidor não estavam de acordo com o esperado.
+- Usuários Virtuais: O teste foi executado com até 9.998 usuários virtuais simultâneos, fornecendo um teste de carga significativo no sistema.
 
 ### Checks & Groups
 
-![Checks & Groups](./assets/otherStats.png)
+![Checks & Groups](./assets/checksGroups.png)
 
 A terceira foto exibe as estatísticas gerais do teste:
 
@@ -79,16 +91,11 @@ A terceira foto exibe as estatísticas gerais do teste:
 - Iterations: O número de vezes que o teste foi executado.
 - Virtual Users: Usuários simulados fazendo requisições.
 - Data Received e Data Sent: Quantidade de dados transferidos.
+- Importante!: Uma checagem importante, "response time is less than 200ms", falhou em muitas ocasiões, com 831.504 falhas, ressaltando problemas com o tempo de resposta do sistema.
 
-### Análise dos Resultados
+### Conclusão dos Resultados
 
-- Total de Requisições: 1.789 requisições foram feitas sem falhas.
-- Tempos de Resposta: A requisição média levou 5,5 segundos, com um máximo de 23,4 segundos.
-- Checks: 7.156 verificações passaram, sugerindo que todas as afirmações definidas foram atendidas.
-- Usuários Virtuais: Apenas 1 usuário foi simulado, o que não representa um teste de carga pesada.
-- Transferência de Dados: Uma pequena quantidade de dados foi transferida; 1,32 MB recebidos e 0,59 MB enviados.
-- Desempenho: Nenhum limiar foi ultrapassado ou verificações falharam, indicando que o endpoint lidou bem com este teste.
-- Verificações Personalizadas: Todas as verificações personalizadas passaram, tais como o código de status 201 e tempos de resposta inferiores a 200ms.
+O teste revela problemas significativos com a estabilidade e desempenho do endpoint, que sugerem que o sistema não esta preparado para lidar com cargas elevadas de usuário. A alta taxa de solicitações falhas e checagens falhas é um alerta que não pode ser ignorado. O nosso sistema precisa de otimizações e mudanças no código para lidar melhor com cargas altas e garantir respostas rápidas e confiáveis. Os proximos passos incluem uma investigação das causas das falhas e uma revisão das configurações do servidor, código de aplicação, e infraestrutura de suporte. Melhorias na escalabilidade, otimização de código e aumento de recursos tambés são necessárias para atender aos padroes do teste.
 
 ## Conclusão
 A utilização de requisições HTTP em testes de carga é essencial para avaliar o desempenho e a robustez de aplicações. Com o k6, podemos criar testes robustos e analisar os resultados de forma eficiente, garantindo assim a qualidade e performance das aplicações. A customização de tags e o agrupamento de dados são técnicas importantes para simplificar a análise dos resultados em testes com URLs dinâmicos.
