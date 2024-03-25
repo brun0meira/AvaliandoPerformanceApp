@@ -63,22 +63,22 @@ Essa foto mostra várias métricas relacionadas a requisições HTTP:
 
 ![Other Stats](./assets/checksGroups.png)
 
-A segunda foto exibe as estatísticas gerais do teste:
+A segunda foto fornece detalhes sobre verificações personalizadas, que são condições ou afirmações que o teste verifica, como:
 
-- Checks: Afirmações durante o teste.
-- Iterations: O número de vezes que o teste foi executado.
-- Virtual Users: Usuários simulados fazendo requisições.
-- Data Received e Data Sent: Quantidade de dados transferidos.
+- Códigos de status HTTP.
+- Tempos de resposta.
+- Verificações de conteúdo nas respostas de corpos e cabeçalhos.
 
 ### Checks & Groups
 
 ![Checks & Groups](./assets/otherStats.png)
 
-A terceira foto fornece detalhes sobre verificações personalizadas, que são condições ou afirmações que o teste verifica, como:
+A terceira foto exibe as estatísticas gerais do teste:
 
-- Códigos de status HTTP.
-- Tempos de resposta.
-- Verificações de conteúdo nas respostas de corpos e cabeçalhos.
+- Checks: Afirmações durante o teste.
+- Iterations: O número de vezes que o teste foi executado.
+- Virtual Users: Usuários simulados fazendo requisições.
+- Data Received e Data Sent: Quantidade de dados transferidos.
 
 ### Análise dos Resultados
 
